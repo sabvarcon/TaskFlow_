@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: taskflow
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: OPENWEATHER_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false

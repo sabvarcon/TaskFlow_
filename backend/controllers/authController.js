@@ -13,9 +13,9 @@ const register = async (req, res, next) => {
             });
         }
 
-        if (password.length < 6) {
+        if (typeof password !== 'string' || password.length < 8) {
             return res.status(400).json({
-                mensaje: 'La contraseña debe tener al menos 6 caracteres'
+                mensaje: 'La contraseña debe tener al menos 8 caracteres'
             });
         }
 
@@ -36,7 +36,8 @@ const register = async (req, res, next) => {
         const newUser = await User.create({
             name: name.trim(),
             email: normalizedEmail,
-            password: hashedPassword
+            password: hashedPassword,
+            role: 'user'
         });
 
         res.status(201).json({
@@ -101,7 +102,8 @@ const login = async (req, res, next) => {
             usuario: {
                 id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                role: user.role
             }
         });
 

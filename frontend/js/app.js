@@ -26,9 +26,20 @@ const completedCount = document.getElementById('completed-count');
 const formTitle = document.getElementById('form-title');
 const saveTaskBtn = document.getElementById('save-task-btn');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
+const taskSearch = document.getElementById('task-search');
+const taskFilter = document.getElementById('task-filter');
+const previousPageBtn = document.getElementById('previous-page');
+const nextPageBtn = document.getElementById('next-page');
+const pageIndicator = document.getElementById('page-indicator');
+const weatherCity = document.getElementById('weather-city');
+const weatherButton = document.getElementById('weather-button');
+const weatherResult = document.getElementById('weather-result');
 
 let editingTaskId = null;
 let currentUser = null;
+let currentPage = 1;
+let totalPages = 1;
+const pageSize = 8;
 
 // MOSTRAR MENSAJES
 function showMessage(element, message, type = 'success') {
@@ -142,8 +153,15 @@ logoutBtn.addEventListener('click', () => {
 // CARGAR TODAS LAS TAREAS
 async function loadTasks() {
     try {
-        const data = await apiRequest('/tasks');
+        const params = new URLSearchParams({ page: currentPage, limit: pageSize });
+        if (taskSearch?.value.trim()) params.set('search', taskSearch.value.trim());
+        if (taskFilter?.value !== 'all') params.set('completed', taskFilter.value);
+        const data = await apiRequest(`/tasks?${params.toString()}`);
 
+        totalPages = data.pagination?.totalPages || 1;
+        pageIndicator.textContent = `Página ${currentPage} de ${totalPages}`;
+        previousPageBtn.disabled = currentPage <= 1;
+        nextPageBtn.disabled = currentPage >= totalPages;
         renderTasks(data.tareas);
 
         showMessage(taskMessage, '');
@@ -277,6 +295,7 @@ taskForm.addEventListener('submit', async (event) => {
         }
 
         resetTaskForm();
+        currentPage = 1;
         await loadTasks();
 
     } catch (error) {
@@ -357,6 +376,29 @@ async function deleteTask(id) {
     }
 }
 
+// FILTROS Y PAGINACIÓN
+let searchDebounce;
+taskSearch.addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => { currentPage = 1; loadTasks(); }, 250);
+});
+taskFilter.addEventListener('change', () => { currentPage = 1; loadTasks(); });
+previousPageBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; loadTasks(); } });
+nextPageBtn.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; loadTasks(); } });
+
+// INTEGRACIÓN REST CON OPENWEATHER (la clave permanece en el backend)
+weatherButton.addEventListener('click', async () => {
+    const city = weatherCity.value.trim();
+    if (!city) { weatherResult.textContent = 'Escribe el nombre de una ciudad.'; return; }
+    weatherButton.disabled = true;
+    weatherResult.textContent = 'Consultando...';
+    try {
+        const data = await apiRequest(`/weather?city=${encodeURIComponent(city)}`);
+        weatherResult.textContent = `${data.ciudad}, ${data.pais}: ${Math.round(data.temperatura)} °C, ${data.descripcion}. Sensación térmica ${Math.round(data.sensacion)} °C; humedad ${data.humedad}%.`;
+    } catch (error) { weatherResult.textContent = error.message; }
+    finally { weatherButton.disabled = false; }
+});
+
 // RECUPERAR SESIÓN AL RECARGAR LA PÁGINA
 async function initializeApp() {
     const token = localStorage.getItem('taskflow_token');
@@ -367,7 +409,7 @@ async function initializeApp() {
     }
 
     try {
-        const data = await apiRequest('/tasks');
+        const data = await apiRequest(`/tasks?page=1&limit=${pageSize}`);
 
         // El token es válido si la consulta protegida funcionó.
         currentUser = {
@@ -380,6 +422,10 @@ async function initializeApp() {
         welcomeMessage.textContent =
             'Bienvenido de nuevo. ¡Organiza tu día!';
 
+        totalPages = data.pagination?.totalPages || 1;
+        pageIndicator.textContent = `Página 1 de ${totalPages}`;
+        previousPageBtn.disabled = true;
+        nextPageBtn.disabled = totalPages <= 1;
         renderTasks(data.tareas);
 
     } catch (error) {

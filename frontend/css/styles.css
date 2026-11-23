@@ -351,3 +351,32 @@ textarea {
         font-size: 24px;
     }
 }
+
+
+.tools-panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 18px 0;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #e8ebf1;
+    border-radius: 12px;
+}
+.tools-panel input, .tools-panel select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #dce1e9;
+    border-radius: 8px;
+    font: inherit;
+}
+.weather-controls, .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.weather-controls input { flex: 1; min-width: 150px; }
+.pagination-controls { justify-content: center; margin: 20px 0; }
+.pagination-controls button:disabled, .weather-controls button:disabled { opacity: .45; cursor: not-allowed; }
+#weather-result { margin: 4px 0 0; color: #526078; }

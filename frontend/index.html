@@ -150,12 +150,37 @@
                 </div>
             </form>
 
+            <section class="tools-panel" aria-label="Filtros de tareas">
+                <label for="task-search">Buscar por título</label>
+                <input id="task-search" type="search" placeholder="Buscar tareas...">
+                <label for="task-filter">Estado</label>
+                <select id="task-filter">
+                    <option value="all">Todas</option>
+                    <option value="false">Pendientes</option>
+                    <option value="true">Completadas</option>
+                </select>
+            </section>
+
+            <section class="tools-panel weather-panel" aria-label="Consulta del clima">
+                <h3>Clima de tu ciudad</h3>
+                <div class="weather-controls">
+                    <input id="weather-city" type="text" maxlength="80" placeholder="Ej. Durango">
+                    <button id="weather-button" class="secondary-btn" type="button">Consultar clima</button>
+                </div>
+                <p id="weather-result" aria-live="polite"></p>
+            </section>
+
             <div class="task-summary">
                 <span id="task-count">0 tareas</span>
                 <span id="completed-count">0 completadas</span>
             </div>
 
             <div id="task-list" class="task-list"></div>
+            <div class="pagination-controls">
+                <button id="previous-page" class="secondary-btn" type="button">Anterior</button>
+                <span id="page-indicator">Página 1</span>
+                <button id="next-page" class="secondary-btn" type="button">Siguiente</button>
+            </div>
 
             <p id="task-message" class="message"></p>
 
