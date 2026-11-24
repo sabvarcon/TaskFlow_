@@ -19,7 +19,7 @@ app.use(cors({ origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split('
 app.use(express.json({ limit: '20kb' }));
 
 // Servir la compilación React cuando exista; mantener el frontend anterior como respaldo.
-const reactDist = path.join(__dirname, '../frontend/dist');
+const reactDist = path.join(__dirname, '../frontend-react/dist');
 const legacyFrontend = path.join(__dirname, '../frontend');
 app.use(express.static(fs.existsSync(reactDist) ? reactDist : legacyFrontend));
 
