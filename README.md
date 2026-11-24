@@ -118,7 +118,7 @@ Vite reenvía las solicitudes `/api` a Express en `http://localhost:3000`.
 
 ### Compilar para producción
 
-Ejecuta `npm run build`. Vite genera los archivos compilados en `frontend/dist/`; Express sirve esa carpeta automáticamente. En Render, configura el comando de construcción como `npm install && npm run build` y el comando de inicio como `npm start`.
+Ejecuta `npm run build`. Vite genera los archivos compilados en frontend-react/dist/; Express sirve esa carpeta automáticamente. En Render, configura el comando de construcción como `npm install && npm run build` y el comando de inicio como `npm start`.
 
 La aplicación React conserva las rutas existentes de autenticación, tareas, clima y administración. Para que la consulta del clima funcione, configura `OPENWEATHER_API_KEY` en las variables de entorno del servidor.
 
